@@ -1,0 +1,159 @@
+agent Player {
+    module Console console;
+        module Debug debug;
+
+    types gameOntology {
+        formula player(string);
+        formula turn(string);
+        formula token(string);
+        formula played(string, int); 
+        formula free(int);
+        formula winner(string);
+        formula loser(string);
+        formula drawn(string);
+        formula move(int);   
+        formula line(int, int, int);
+    }
+
+    initial line(1, 2, 3);
+    initial line(1, 5, 9);
+    initial line(1, 4, 7);
+    initial line(2, 5, 8);
+    initial line(3, 6, 9);
+    initial line(3, 5, 7);
+    initial line(4, 5, 6);
+    initial line(7, 8, 9);
+    initial token("X");
+    initial token("O");
+    initial player("X");
+
+    //Draw conficuration
+    // initial played("X", 1);
+    // initial played("O", 2);
+    // initial played("X", 3);
+    // initial played("O", 4);
+    // initial played("O", 5);
+    // initial played("X", 6);
+    // initial played("X", 7);
+    // initial played("X", 8);
+    // initial played("O", 9);
+
+    // //winnner
+    // initial played("X", 1);
+    // initial played("X", 2);
+    // initial played("X", 3);
+    // initial free(4);
+    // initial free(5);
+    // initial free(6);
+    // initial free(7);
+    // initial free(8);
+    // initial free(9);
+
+    //lost
+    // initial played("O", 1);
+    // initial played("O", 2);
+    // initial played("O", 3);
+    // initial free(4);
+    // initial free(5);
+    // initial free(6);
+    // initial free(7);
+    // initial free(8);
+    // initial free(9);
+
+     //X turn
+    // initial turn("X");
+    // initial free(1);
+    // initial free(2);
+    // initial free(3);
+    // initial free(4);
+    // initial free(5);
+    // initial free(6);
+    // initial free(7);
+    // initial free(8);
+    // initial free(9);
+
+    //Not Started
+    initial free(1);
+    initial free(2);
+    initial free(3);
+    initial free(4);
+    initial free(5);
+    initial free(6);
+    initial free(7);
+    initial free(8);
+    initial free(9);
+
+    inference drawn(string T) :- token(T) & ~free(int L) & ~winner(string T2);
+
+    inference winner(string T) :- line(int L1, int L2, int L3) & played(T, L1) & played(T, L2) & played(T, L3);
+
+    inference loser(string T) :- winner(string T2) & player(T) & T ~= T2;
+
+    rule +!main(list args): player(string Player) & drawn(Player) {
+        console.println("Tic-Tac-Toe");
+        console.println("Game is Drawn");
+    }
+
+   rule +!main(list args): player(string Player) & winner(Player) {
+        console.println("Tic-Tac-Toe");
+        console.println("Game won by player " + Player);
+    }
+
+   rule +!main(list args): player(string Player) & loser(Player) {
+        console.println("Tic-Tac-Toe");
+        console.println("Game lost by player " + Player);
+    }
+
+    rule +!main(list args): player(string Player) & loser(Player) {
+        console.println("Tic-Tac-Toe");
+        console.println("Game lost by player " + Player);
+    }
+
+    rule +!main(list args): turn(string Player) {
+        console.println("Tic-Tac-Toe");
+        console.println("is " + Player + "`s turn");
+    }
+
+    rule +!main(list args) {
+        console.println("Tic-Tac-Toe");
+        console.println("Game has not started.");
+    }
+
+    rule +!move(): free(1) {
+        !move(1);   
+    }
+    rule +!move(): free(2) {
+        !move(2);
+    }
+
+    rule +!move(): free(3) {  
+        !move(3);  
+    }
+
+    rule +!move(): free(4) {  
+        !move(4);  
+    }
+    rule +!move(): free(5) {  
+        !move(5);  
+    }
+    rule +!move(): free(6) {  
+        !move(6);  
+    }
+
+    rule +!move(): free(6) {  
+        !move(6);  
+    }
+
+    rule +!move(): free(7) {  
+        !move(7);  
+    }
+
+    rule +!move(): free(8) {  
+        !move(8);  
+    }
+
+     rule +!move(): free(9) {  
+        !move(9);  
+    }
+    
+}

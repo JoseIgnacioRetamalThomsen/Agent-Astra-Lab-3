@@ -1,0 +1,165 @@
+// Strategy:
+// Since is not really posible to win if the oponent know the game, we play for draw:
+// -If midle is free we play midle
+// -Then we try to fill any two contiguos (ex 1,2), this will make us to win or take away a win from the oponent.
+// It may happens that we win, but will always draw, I think...
+
+agent Better extends Player{
+    types oponentOntology {
+        formula two(int, int);
+        formula MakeMove(int);
+        formula MakeMove2(int);
+        formula MakeMove3(int);
+    }
+    initial two(1,2);
+    initial two(1,3);
+    initial two(2,3);
+    initial two(1,4);
+    initial two(1,9);
+    initial two(5,9);
+    initial two(1,4);
+    initial two(1,7);
+    initial two(4,7);
+    initial two(1,7);
+    initial two(2,5);
+    initial two(2,8);
+    initial two(5,8);
+    initial two(3,6);
+    initial two(3,9);
+    initial two(6,9);
+    initial two(3,5);
+    initial two(3,7);
+    initial two(5,7);
+    initial two(4,5);
+    initial two(5,6);
+    initial two(4,6);
+    initial two(7,8);
+    initial two(8,9);
+    initial two(7,9);
+
+    //was not able to make OR to work so just make 3 rules...
+    inference MakeMove(int Position) :- two(int One, int Two) & free(Position) & played(string AnyPLayer, One) & played(AnyPLayer, Two) & line(One, Two, Position);
+    inference MakeMove2(int Position) :- two(int One, int Two) & free(Position) & played(string AnyPLayer, One) & played(AnyPLayer, Two) & line(One, Position ,Two) ;
+    inference MakeMove3(int Position) :- two(int One, int Two) & free(Position) & played(string AnyPLayer, One) & played(AnyPLayer, Two) & line(Position, One  ,Two) ;
+
+    //if center is free we play it
+    rule +!move(): free(5) {  
+        !move(5);  
+    }
+    // fill any two spaces
+    rule +!move(): MakeMove(1)  {  
+        !move(1);  
+    }
+     rule +!move(): MakeMove2(1)  {  
+        !move(1);  
+    }
+     rule +!move(): MakeMove3(1)  {  
+        !move(1);  
+    }
+
+    rule +!move(): MakeMove(2)  {  
+        !move(2);  
+    }
+    rule +!move(): MakeMove2(2)  {  
+        !move(2);  
+    }
+    rule +!move(): MakeMove2(2)  {  
+        !move(2);  
+    }
+    rule +!move(): MakeMove(3)  {  
+        !move(3);  
+    }
+    rule +!move(): MakeMove2(3)  {  
+        !move(3);  
+    }
+    rule +!move(): MakeMove3(3)  {  
+        !move(3);  
+    }
+    rule +!move(): MakeMove(4)  {  
+        !move(4);  
+    }
+    rule +!move(): MakeMove2(4)  {  
+        !move(4);  
+    }
+     rule +!move(): MakeMove3(4)  {  
+        !move(4);  
+    }
+    rule +!move(): MakeMove(5)  {  
+        !move(5);  
+    }
+    rule +!move(): MakeMove2(5)  {  
+        !move(5);  
+    }
+    rule +!move(): MakeMove3(5)  {  
+        !move(5);  
+    }
+    rule +!move(): MakeMove(6)  {  
+        !move(6);  
+    }
+      rule +!move(): MakeMove2(6)  {  
+        !move(6);  
+    }
+      rule +!move(): MakeMove3(6)  {  
+        !move(6);  
+    }
+    rule +!move(): MakeMove(7)  {  
+        !move(7);  
+    }
+    rule +!move(): MakeMove2(7)  {  
+        !move(7);  
+    }
+      rule +!move(): MakeMove3(7)  {  
+        !move(7);  
+    }
+    rule +!move(): MakeMove(8)  {  
+        !move(8);  
+    }
+    rule +!move(): MakeMove2(8)  {  
+        !move(8);  
+    } 
+    rule +!move(): MakeMove3(8)  {  
+        !move(8);  
+    }
+    rule +!move(): MakeMove(9)  {  
+        !move(9);  
+    }
+    rule +!move(): MakeMove2(9)  {  
+        !move(9);  
+    }
+    rule +!move(): MakeMove3(9)  {  
+        !move(9);  
+    }
+
+
+    //then any move
+    rule +!move(): free(1) {
+        !move(1);   
+    }
+   
+    rule +!move(): free(3) {  
+        !move(3);  
+    }
+     rule +!move(): free(2) {
+        !move(2);
+    }
+    rule +!move(): free(4) {  
+        !move(4);  
+    }
+    rule +!move(): free(6) {  
+        !move(6);  
+    }
+    rule +!move(): free(7) {  
+        !move(7);  
+    }
+    rule +!move(): free(8) {  
+        !move(8);  
+    }
+    rule +!move(): free(9) {  
+        !move(9);  
+    }
+    rule +!move(){  
+       console.println("Game is Over"); 
+       debug.dumpBeliefs();
+       system.exit();
+    }
+}

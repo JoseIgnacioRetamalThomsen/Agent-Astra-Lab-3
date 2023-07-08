@@ -1,0 +1,110 @@
+agent Player {
+    module Console console;
+    module Debug debug;
+    module System system;
+
+    types gameOntology {
+        formula player(string);
+        formula turn(string);
+        formula check(string);
+        formula token(string);
+        formula played(string, int); 
+        formula free(int);
+        formula winner(string);
+        formula loser(string);
+        formula drawn(string);
+        formula move(int);   
+        formula line(int, int, int);
+        formula openent(string);
+    }
+
+
+    initial line(1, 2, 3);
+    initial line(1, 5, 9);
+    initial line(1, 4, 7);
+    initial line(2, 5, 8);
+    initial line(3, 6, 9);
+    initial line(3, 5, 7);
+    initial line(4, 5, 6);
+    initial line(7, 8, 9);
+
+    initial free(1);
+    initial free(2);
+    initial free(3);
+    initial free(4);
+    initial free(5);
+    initial free(6);
+    initial free(7);
+    initial free(8);
+    initial free(9);
+
+    initial token("X");
+    initial token("O");
+
+    inference drawn(string T) :- token(T) & ~free(int L) & ~winner(string T2);
+
+    inference winner(string T) :- line(int L1, int L2, int L3) & played(T, L1) & played(T, L2) & played(T, L3);
+
+    inference loser(string T) :- winner(string T2) & player(T) & T ~= T2;
+
+    rule +!main(list args)  {
+        console.println("Player " + at_index(args, 0, string) + " ready to go.");
+        +player(at_index(args, 0, string));
+        +openent(at_index(args, 1, string));
+        +turn(at_index(args, 2, string));
+        system.sleep(1000);
+    }
+
+    rule +!check(string Player): player(Player) & drawn(Player){
+        console.println("Game is Drawn");
+        +drawn(Player);
+    }
+
+    rule +!check(string Player): player(Player) & winner(Player){
+        console.println("Game won by player " + Player);
+        +winner(Player);
+    }
+
+
+    rule +!check(string Player): player(Player) & loser(Player){
+        console.println("Game lost by player " + Player);
+        +loser(Player);
+    }
+
+    rule +!check(string Player): player(Player) {
+        console.println("In Game");
+       
+    }
+
+    rule +turn(string Player): player(Player) & openent(string OtherPlayer) {
+        console.println("I'm playing now...");
+        -turn(Player);
+        !move(); 
+        +turn(OtherPlayer);  
+    }
+
+    rule @message(inform, string sender, played(string OtherPlayer, int Position)) :player(string Player){
+    console.println("Recive player ");
+       -free(Position);
+        +played(OtherPlayer,Position);
+        !check(Player);
+        -turn(OtherPlayer);
+        +turn(Player);
+    }
+
+    rule +!played(string Player, int Position){
+        -free(Position);
+        +played(Player, Position);      
+    }
+
+    rule +!move(int Position): player(string Player) & openent(string OtherPlayer)  {
+        console.println("Player_"+Player+" Making move on " + Position);
+        !played(Player, Position);
+        !check(Player);
+        -turn(Player);
+        +turn(OtherPlayer);
+        send(inform, OtherPlayer, played(Player,Position));
+    } 
+
+   
+}

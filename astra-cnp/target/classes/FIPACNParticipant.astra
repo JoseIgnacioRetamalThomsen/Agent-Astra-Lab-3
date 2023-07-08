@@ -1,0 +1,49 @@
+agent FIPACNParticipant extends FIPAContractNet {
+    types cnp_participant {
+        formula accepted(string /* contract_id*/, string /*awarder*/);
+        formula rejected(string /* contract_id*/, string /*awarder*/);
+    }
+
+    // COMMUNUCATION RULES
+    rule @message(cfp, string sender, contract(string id, string type, list params, int deadline)) {
+        +contract(id, type, params, deadline);
+
+        try {
+            !bid(id, string name, int value);
+
+            send(propose, sender, bid(id, name, value));
+        } recover {
+            send(refuse, sender, contract(id, type, params, deadline));
+        }
+    }
+
+    rule @message(accept-proposal, string sender, bid(string id, system.name(), int value)) : contract(id, string type, list params, int deadline) {
+        +accepted(id, sender);
+        try {
+            !fulfil(id, type, params);
+            send(inform, sender, fulfilled(id, type, params));
+        } recover {
+            send(failure, sender, contract(id, type, params, deadline));
+        }
+    }
+
+    rule @message(reject-proposal, string sender, bid(string id, system.name(), int value)) : contract(id, string type, list params, int deadline) {
+        +rejected(id, sender);
+    }
+
+    rule +!bid(string id, string name, int value) {
+        !generate_bid(id, int my_value);
+        
+        name = system.name();
+        value = my_value;
+        +bid(id, name, value);
+    }
+    
+    rule +!generate_bid(string id, int value) : contract(id, string type, list params, int deadline) {
+        system.fail();
+    }
+
+    rule +!fulfil(string id, string type, list params) {
+        system.fail();
+    }
+}

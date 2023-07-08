@@ -1,0 +1,40 @@
+agent Oponent extends Player{
+
+ //   inference MakeMove(int Position) :- two(int One, int Two) & (line(One, Two,  Position) | line(Two, One, Position)) & free(Position);
+    
+    rule +!move(): free(7) {  
+        !move(7);  
+    }
+    rule +!move(): free(9) {  
+        !move(9);  
+    }
+    rule +!move(): free(3) {  
+        !move(3);  
+    }
+    rule +!move(): free(8) {  
+        !move(8);  
+    }
+    rule +!move(): free(1) {
+        !move(1);   
+    }
+    rule +!move(): free(2) {
+        !move(2);
+    }
+  
+    rule +!move(): free(4) {  
+        !move(4);  
+    }
+    rule +!move(): free(5) {  
+        !move(5);  
+    }
+    rule +!move(): free(6) {  
+        !move(6);  
+    }
+    
+     rule +!move(){  
+       console.println("Game is Over"); 
+       debug.dumpBeliefs();
+       system.exit();
+    }
+    
+}

@@ -1,0 +1,9 @@
+agent FIPAContractNet {
+    module System system;
+
+    types cnp_shared {
+        formula contract(string, string, list, int);
+        formula bid(string, string, int);
+        formula fulfilled(string, string, list);
+    }
+}

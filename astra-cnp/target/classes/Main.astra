@@ -1,0 +1,18 @@
+agent Main extends astra.ui.AstraGUI {
+    module Console console;
+    module System system;
+
+    rule +!main(list args) {
+        list participants = [];
+        int i=0;
+        while (i<4) {
+            string name = "b"+i;
+            system.createAgent(name, "DaBidder");
+            participants = participants + [name];
+            i++;
+        }
+        console.println("Participants: " + participants);
+        system.createAgent("auctioneer", "MrAuctioneer");
+        system.setMainGoal("auctioneer", participants);
+    }
+}

@@ -1,0 +1,13 @@
+agent DaBidder extends FIPACNParticipant {
+    module Math math;
+    module Console console;
+
+    rule +!generate_bid(string id, int value) : contract(id, "test", [], int deadline) {
+        value = 1+(math.randomInt() % 20);
+    }
+
+    rule +!fulfil(string id, "test", []) {
+        console.println("I am fulfilling the contract...");
+    }
+
+}

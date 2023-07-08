@@ -1,0 +1,16 @@
+agent Main {
+  module System system;
+  module Console console;
+
+  rule +!main(list args) {
+      console.println("Main");
+
+    system.createAgent("X", "Player");
+    system.createAgent("O", "Player");
+  //   system.setMainGoal("X", ["X","X"]);
+  //   system.setMainGoal("O", ["O","X"]);
+  // }
+    system.setMainGoal("X", ["X","O","X"]);
+    system.setMainGoal("O", ["O","X","X"]);
+  }
+}

@@ -1,0 +1,66 @@
+import astra.unit.*;
+
+agent FIPAContractNetTests extends astra.unit.ASTRAUnitTest, FIPAContractNet {
+    types test {
+        formula receivedCFP();
+        formula receivedAP();
+    }
+
+    module System system;
+
+    rule +!setup(TestSuite suite) {
+        system.createAgent("auctioneer", "FIPACNInitiator");
+        UT.injectBelief(suite, "auctioneer", participant(system.name()));
+    }
+
+    // ---------------------------------------------------------------------------------------------
+    // TEST DISSEMINATION OF CFP
+    // ---------------------------------------------------------------------------------------------
+    rule +!test_cfp(TestSuite suite) {
+        UT.injectBelief(suite, "auctioneer", contract("1", "test", [], 1000));
+
+        wait(receivedCFP(), 2000);
+        if (receivedCFP()) 
+            UT.success(suite);
+        else
+            UT.fail(suite, "No cfp received");
+    }
+
+    rule @message(cfp, string sender, contract("1", string type, list params, int deadline)) {
+        +receivedCFP();
+    }
+
+    // ---------------------------------------------------------------------------------------------
+    // TEST SUBMISSION OF PROPOSAL
+    // ---------------------------------------------------------------------------------------------
+    rule +!test_propose(TestSuite suite) {
+        UT.injectBelief(suite, "auctioneer", contract("2", "test", [], 1000));
+        system.sleep(3000);
+        UT.assertBelief(suite, "auctioneer", bid("2", system.name(), 11));
+    }
+
+    rule @message(cfp, string sender, contract("2", string type, list params, int deadline)) {
+        send(propose, "auctioneer", bid("2", system.name(), 11));
+    }
+
+    // ---------------------------------------------------------------------------------------------
+    // TEST RECEIPT OF ACCEPT-PROPOSAL
+    // ---------------------------------------------------------------------------------------------
+    rule +!test_win(TestSuite suite) {
+        UT.injectBelief(suite, "auctioneer", contract("3", "test", [], 1000));
+
+        wait(receivedAP(), 3000);
+        if (receivedAP()) 
+            UT.success(suite);
+        else
+            UT.fail(suite, "No accept-proposal received");
+    }
+
+    rule @message(cfp, string sender, contract("3", string type, list params, int deadline)) {
+        send(propose, "auctioneer", bid("3", system.name(), 11));
+    }
+
+    rule @message(accept-proposal, string sender, bid("3", system.name(), 11)) {
+        +receivedAP();
+    }
+}

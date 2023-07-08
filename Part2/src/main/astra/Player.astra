@@ -1,0 +1,147 @@
+agent Player {
+    module Console console;
+        module Debug debug;
+
+    types gameOntology {
+        formula player(string);
+        formula turn(string);
+
+        formula token(string);
+        formula played(string, int); 
+        formula free(int);
+        formula winner(string);
+        formula loser(string);
+        formula drawn(string);
+        formula move(int);   
+        formula line(int, int, int);
+        formula playerMap(string, string);
+    }
+
+
+    initial line(1, 2, 3);
+    initial line(1, 5, 9);
+    initial line(1, 4, 7);
+    initial line(2, 5, 8);
+    initial line(3, 6, 9);
+    initial line(3, 5, 7);
+    initial line(4, 5, 6);
+    initial line(7, 8, 9);
+
+    initial free(1);
+    initial free(2);
+    initial free(3);
+    initial free(4);
+    initial free(5);
+    initial free(6);
+    initial free(7);
+    initial free(8);
+    initial free(9);
+
+    initial token("X");
+    initial token("O");
+    initial playerMap("X", "O");
+    initial playerMap("O", "X");
+  
+    inference drawn(string T) :- token(T) & ~free(int L) & ~winner(string T2);
+
+    inference winner(string T) :- line(int L1, int L2, int L3) & played(T, L1) & played(T, L2) & played(T, L3);
+
+    inference loser(string T) :- winner(string T2) & player(T) & T ~= T2;
+
+
+    rule +!main(list args)  {
+        console.println("Player " + at_index(args, 0, string) + " ready to go.");
+        +player(at_index(args, 0, string));
+        +turn(at_index(args, 1, string));
+    }
+
+    // rule +turn(string T): player(T) & drawn(T){
+    //     console.println("Drawn= " + T);
+    // }
+
+    // rule +turn(string T): player(T) & winner(string L){
+    //     console.println("Winnner= " + L);
+    // }
+
+    // rule +turn(string T): player(T) & loser(string L){
+    //     console.println("Loser= " + L);
+    // }
+
+    //   rule +turn(string T): player(T) {
+    //     console.println("In Game");
+    // }
+    
+    rule +!main(list args): player(string Player) & drawn(Player) {
+        console.println("Tic-Tac-Toe");
+        console.println("Game is Drawn");
+    }
+
+   rule +!main(list args): player(string Player) & winner(Player) {
+        console.println("Tic-Tac-Toe");
+        console.println("Game won by player " + Player);
+    }
+
+   rule +!main(list args): player(string Player) & loser(Player) {
+        console.println("Tic-Tac-Toe");
+        console.println("Game lost by player " + Player);
+    }
+
+    rule +!main(list args): player(string Player) & loser(Player) {
+        console.println("Tic-Tac-Toe");
+        console.println("Game lost by player " + Player);
+    }
+
+    rule +!main(list args): turn(string Player) {
+        console.println("Tic-Tac-Toe");
+        console.println("is " + Player + "`s turn");
+    }
+
+    rule +turn(string T): player(T) {
+    console.println("I'm playing now...");
+    !move();
+      
+    }
+
+    rule +!move(): free(1) {
+        !move(1);   
+    }
+    rule +!move(): free(2) {
+        !move(2);
+    }
+
+    rule +!move(): free(3) {  
+        !move(3);  
+    }
+
+    rule +!move(): free(4) {  
+        !move(4);  
+    }
+    rule +!move(): free(5) {  
+        !move(5);  
+    }
+    rule +!move(): free(6) {  
+        !move(6);  
+    }
+
+    rule +!move(): free(6) {  
+        !move(6);  
+    }
+
+    rule +!move(): free(7) {  
+        !move(7);  
+    }
+
+    rule +!move(): free(8) {  
+        !move(8);  
+    }
+
+     rule +!move(): free(9) {  
+        !move(9);  
+    }
+
+    rule +!move(int Position): player(string Player) & playerMap(Player, string OtherPLayer)  {
+        console.println("Player_"+ Player +" Making move on " + Position);     
+        -free(Position);
+        +played(Player, Position);  
+    } 
+}

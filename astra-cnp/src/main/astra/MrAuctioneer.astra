@@ -1,0 +1,24 @@
+agent MrAuctioneer extends FIPACNInitiator {
+    module Console console;
+
+    rule +!main(list args) {
+        forall(string arg : args) {
+            +participant(arg);
+        }
+        +contract("1", "test", [], 1000);
+    }
+
+    rule +completed("1", true) {
+        +contract("2", "test", [], 2000);
+    }
+    
+    rule +!completed(string id, boolean outcome) {
+        console.println("Contact: " + id + " / Outcome: " + outcome);
+        FIPACNInitiator::!completed(id, outcome);
+    }
+
+    // rule +awarded(...) {
+    //     // react to the awarding of the contract...
+    //     // e.g. send some key data to the contracted bidder...
+    // }
+}
